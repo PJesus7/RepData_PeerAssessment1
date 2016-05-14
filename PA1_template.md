@@ -40,12 +40,16 @@ data_df <- data_df %>%
 ## What is mean total number of steps taken per day?
 
 For this part of the assignment, we ignore the missing values in the dataset.
+
+```r
+data_dfNoNA <- na.omit(data_df)
+```
 First we create a new data set where we group the data by day and then summarise to compute the sum.
 
 
 ```r
 #daily total number of steps
-totalStepsDay <- data_df %>% group_by(date) %>% summarize(Total = sum(steps, na.rm = TRUE))
+totalStepsDay <- data_dfNoNA %>% group_by(date) %>% summarize(Total = sum(steps, na.rm = TRUE))
 ```
 
 ### Make a histogram of the total number of steps taken each day
@@ -60,18 +64,19 @@ hist(totalStepsDay$Total, xlab = "Total Number Steps Taken On A Day",
 ### Mean and median total number of steps taken per day
 
 ```r
+options(scipen=999)
 totalMean <- mean(totalStepsDay$Total)
 totalMedian <- median(totalStepsDay$Total)
 ```
 
-Concerning the total number of steps taken per day, its mean is 9354.2295082 while its median is 10395.
+Concerning the total number of steps taken per day, its mean is 10766.1886792 while its median is 10765.
 
 ## What is the average daily activity pattern?
 
 Now we perform a similar transformation as the previous item, but we group by interval and then compute the average.
 
 ```r
-avgStepsInt <- data_df %>% group_by(interval) %>% summarize(AverageNo = mean(steps, na.rm = TRUE))
+avgStepsInt <- data_dfNoNA %>% group_by(interval) %>% summarize(AverageNo = mean(steps, na.rm = TRUE))
 ```
 
 ### Time series plot of the 5-minute interval and the average number of steps taken, averaged across all days
@@ -129,11 +134,10 @@ hist(newTotalStepsDay$Total, xlab = "Total Number Steps Taken On A Day",
 ![](./figure/histWithNA-1.png)
 
 ```r
-options(scipen=999)
 newMean <- mean(newTotalStepsDay$Total)
 newMedian <- median(newTotalStepsDay$Total)
 ```
-Following the same steps in the construction of the first histogram, we see that the class count shifted to the right. The frequency of the first bin decreased while the other ones increased. The new values of the mean and median are 10766.1886792 and 10766.1886792 respectively. Which also show an increase in the total number of steps.
+Following the same steps in the construction of the first histogram, we see that one of the bins increased. The new values of the mean and median are 10766.1886792 and 10766.1886792 respectively, which is the same mean value but a slightly different median value.
 
 Looking a little bit further in which days the NA values appear.
 
@@ -158,7 +162,7 @@ dataWithNA
 ```
 We see that when a day has an NA, the entire day is filled with NA, which means that there were some days that had total 0 because there wasn't any observation on that day.
 
-Replacing NA with any number will increase the total number of steps on that day and therefore shift frequency from the first bin to another bin. Since the entire day is NA, all these days will have the same values because the impute strategy only depended on the interval.
+Therefore replacing NA with this mean value does not change the value of the mean and the median, but does change the histogram, since that if we replace NA with values we will have more days with values.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
